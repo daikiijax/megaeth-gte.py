@@ -6,17 +6,14 @@ PRIVATE_KEYS = [
     # Multi private keys
 ]
 
-
 RPC_URL = 'https://carrot.megaeth.com/rpc'
-CHAIN_ID = 6342
 GTE_ADDRESS = Web3.to_checksum_address('0x9629684df53db9E4484697D0A50C442B2BFa80A8')
 ROUTER_ADDRESS = Web3.to_checksum_address('0xA6b579684E943F7D00d616A48cF99b5147fC57A5')
 WETH_ADDRESS = Web3.to_checksum_address('0x776401b9BC8aAe31A685731B7147D4445fD9FB19')
 GTE_TO_ETH_RATE = 0.000033753025406442
 TX_DELAY = 10  # Seconds
-GAS_PRICE = Web3.to_wei(0.002, 'gwei')
-SWAP_PER_WALLET = 2 # 1-999 whatever you want 
-LIQ_PER_WALLET = 2 # 1-999 whatever you want 
+SWAP_PER_WALLET = 2
+LIQ_PER_WALLET = 2
 
 ROUTER_ABI = [
     {"inputs": [
@@ -62,6 +59,10 @@ TOKEN_ABI = [
 ]
 
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
+CHAIN_ID = w3.eth.chain_id   # otomatis ambil chain id
+
+def get_gas_price():
+    return w3.eth.gas_price   # otomatis ambil gas price terbaru
 
 def approve_gte(wallet, amount):
     contract = w3.eth.contract(GTE_ADDRESS, abi=TOKEN_ABI)
@@ -69,12 +70,12 @@ def approve_gte(wallet, amount):
     tx = contract.functions.approve(ROUTER_ADDRESS, amount).build_transaction({
         'from': wallet.address,
         'gas': 100000,
-        'gasPrice': GAS_PRICE,
+        'gasPrice': get_gas_price(),
         'nonce': nonce,
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     return receipt.status == 1
 
@@ -90,12 +91,12 @@ def swap_eth_for_tokens(wallet, amount_eth):
         'from': wallet.address,
         'value': value,
         'gas': 382028,
-        'gasPrice': GAS_PRICE,
+        'gasPrice': get_gas_price(),
         'nonce': nonce,
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
     w3.eth.wait_for_transaction_receipt(tx_hash)
 
 def swap_tokens_for_eth(wallet, amount_gte):
@@ -118,12 +119,12 @@ def swap_tokens_for_eth(wallet, amount_gte):
     ).build_transaction({
         'from': wallet.address,
         'gas': 382028,
-        'gasPrice': GAS_PRICE,
+        'gasPrice': get_gas_price(),
         'nonce': nonce,
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
     w3.eth.wait_for_transaction_receipt(tx_hash)
 
 def add_liquidity(wallet):
@@ -149,12 +150,12 @@ def add_liquidity(wallet):
         'from': wallet.address,
         'value': eth_amt_wei,
         'gas': 460547,
-        'gasPrice': GAS_PRICE,
+        'gasPrice': get_gas_price(),
         'nonce': nonce,
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
     w3.eth.wait_for_transaction_receipt(tx_hash)
 
 def main():
