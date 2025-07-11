@@ -1,1 +1,7 @@
-# megaeth-gte.py
+installation 
+#
+pip install web3
+#
+faucet
+#
+https://testnet.megaeth.com/
