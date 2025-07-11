@@ -75,7 +75,7 @@ def approve_gte(wallet, amount):
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     return receipt.status == 1
 
@@ -96,7 +96,7 @@ def swap_eth_for_tokens(wallet, amount_eth):
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
     w3.eth.wait_for_transaction_receipt(tx_hash)
 
 def swap_tokens_for_eth(wallet, amount_gte):
@@ -124,7 +124,7 @@ def swap_tokens_for_eth(wallet, amount_gte):
         'chainId': CHAIN_ID,
     })
     signed = wallet.sign_transaction(tx)
-    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
+    tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
     w3.eth.wait_for_transaction_receipt(tx_hash)
 
 def add_liquidity(wallet):
